@@ -5,6 +5,7 @@ import {
   updateOrderDb,
   deleteOrderedProductDb,
   addOrderProductDb,
+  getOrderProductsDb,
 } from '../model/orderModel.js'
 
 export const getAllOrders = async (request, response) => {
@@ -13,6 +14,18 @@ export const getAllOrders = async (request, response) => {
     response.status(200).json(data)
   } catch (error) {
     response.sendStatus(400)
+  }
+}
+
+export const getOrderedProducts = async (request, response) => {
+  try {
+    let data = await getOrderProductsDb(request.user.id_utilisateur)
+    response.status(200).json(data)
+  } catch (error) {
+    response.status(400).json({
+      status: 'fail',
+      message: error.messsage,
+    })
   }
 }
 

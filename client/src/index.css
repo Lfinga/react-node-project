@@ -1,10 +1,35 @@
+.header{
+  background-color: beige;
+  width: 100%;
+  padding: 10px;
+}
+
+nav{
+  text-align: right;
+}
+
+.titre{
+  text-align: center;
+}
+
+.footer{
+  position:absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;
+  background-color: bisque;
+  text-align: center;
+ 
+}
+
 .orderItem{
   display: flex;
+  width: fit-content;
   
 }
 .orderInfo{
   padding: 20px;
-  width: 100%;
+  width: 20%;
 }
 
 img{
@@ -13,4 +38,11 @@ img{
 .quantity{
   display: flex;
   
+}
+.deleteOrder{
+  position: absolute;
+}
+.product-container{
+  display: flex;
+  ;
 }

@@ -18,6 +18,7 @@ import {
   addOrder,
   deleteOrderedProduct,
   addOrderProduct,
+  getOrderedProducts,
 } from './controllers/orderController.js'
 import { getAllProducts, addProduct, deleteProduct, updateProduct, checkbody } from './controllers/productController.js'
 import { getAllUsers, addUser, deleteUser, updateUser } from './controllers/userController.js'
@@ -63,7 +64,7 @@ app.route('/api').get(getAllProducts).post(checkbody, protect, restrictTo, addPr
 //app.route('/api/:id').delete(protect, restrictTo, deleteProduct).patch(protect, restrictTo, updateProduct)
 
 // commandes
-app.route('/api/commande').get(protect, getAllOrders).delete(protect, deleteOrder).post(protect, addOrderProduct)
+app.route('/api/commande').get(protect, getOrderedProducts).delete(protect, deleteOrder).post(protect, addOrderProduct)
 app.route('/api/commande/:id').post(protect, addOrder)
 app.route('/api/commande/:id_produit').delete(protect, deleteOrderedProduct).patch(protect, updateOrder)
 

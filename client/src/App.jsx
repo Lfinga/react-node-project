@@ -3,7 +3,7 @@ import { OrderList } from './components/forms/OrderList'
 import { useEffect, useState } from 'react'
 import { HOST } from './constants'
 
-const fetchOrders = async () => {
+const fetchOrderedProducts = async () => {
   const response = await fetch(`${HOST}/commande`, {
     headers: {
       Authorization:
@@ -13,34 +13,21 @@ const fetchOrders = async () => {
   const data = await response.json()
   return data
 }
-const fetchProducts = async () => {
-  const response = await fetch(`${HOST}/`)
-  const data = await response.json()
-  return data
-}
+//TODO : delete element when deleting product from DB
+//      delete order when you delete last product of that order
+//      add delete order button
 
 function App() {
-  const [products, setProducts] = useState([])
-  const [orders, setOrders] = useState([])
+  const [orderedProducts, setOrders] = useState([])
 
   useEffect(() => {
-    async function wrapFetchAll() {
-      const myOrders = await fetchOrders()
-      const myProducts = await fetchProducts()
-      setOrders(myOrders)
-      setProducts(myProducts)
+    async function wrapFetch() {
+      const myOrderedProducts = await fetchOrderedProducts()
+
+      setOrders(myOrderedProducts)
     }
-    wrapFetchAll()
+    wrapFetch()
   }, [])
-
-  // useEffect(() => {
-  //   async function wrapfetchProducts() {
-  //   }
-  //   wrapfetchProducts()
-  // }, [])
-
-  // console.log('orders', orders)
-  // console.log('products', products)
 
   return (
     <>
@@ -65,7 +52,7 @@ function App() {
       <div id='page-container'>
         <h1 style={{ textAlign: 'center' }}>Ma commande</h1>
 
-        {orders && products && <OrderList products={products} orders={orders} />}
+        {orderedProducts && <OrderList orderedProducts={orderedProducts} />}
 
         <footer className='footer'>
           <p>Copyright &copy 2023</p>

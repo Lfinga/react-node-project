@@ -8,7 +8,8 @@ const connection = await connectionPromise
 export const getAllOrdersDb = async (id_utilisateur) => {
   console.log('userId', id_utilisateur)
   const results = await connection.all(
-    `SELECT * FROM commande as c JOIN commande_produit as cp ON c.id_commande=cp.id_commande WHERE id_utilisateur=${id_utilisateur} `
+    `SELECT * FROM commande as c JOIN commande_produit as cp ON c.id_commande=cp.id_commande 
+    WHERE id_utilisateur=${id_utilisateur} `
   )
 
   if (results.length === 0) return []
@@ -36,6 +37,29 @@ export const getAllOrdersDb = async (id_utilisateur) => {
   }
 
   return uniqueOrderIds.map((id) => uniqueOrders[id])
+}
+
+export const getOrderProductsDb = async (id_utilisateur) => {
+  const hasAnOrder = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur =?`, [id_utilisateur])
+  console.log(hasAnOrder)
+  if (hasAnOrder === undefined) return []
+  const productIds = await connection.all(`SELECT id_produit FROM commande_produit WHERE id_commande=?`, [
+    hasAnOrder.id_commande,
+  ])
+  if (productIds === undefined) return []
+  console.log('productsIds', productIds)
+
+  let myProducts = []
+  for (const productId of productIds) {
+    const myProduct = await connection.get(
+      `SELECT * FROM produit as p  JOIN commande_produit as cp ON p.id_produit=cp.id_produit 
+      WHERE p.id_produit=?`,
+      [productId.id_produit]
+    )
+    console.log('product')
+    myProducts.push(myProduct)
+  }
+  return myProducts
 }
 
 export const addOrderDb = async (id_utilisateur, produits) => {
@@ -147,8 +171,9 @@ export const updateOrderDb = async (id_commande, id_produit, quantite) => {
 export const deleteOrderedProductDb = async (userId, productId) => {
   const orderId = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur=?`, [userId])
   console.log('orderId', orderId)
-  await connection.run(`DELETE FROM commande_produit WHERE id_commande=? and id_produit=?`, [
+  const deletedProduct = await connection.run(`DELETE FROM commande_produit WHERE id_commande=? and id_produit=?`, [
     orderId.id_commande,
     productId,
   ])
+  console.log('just deleted', deletedProduct)
 }
