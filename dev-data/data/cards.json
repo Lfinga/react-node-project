@@ -1,0 +1,20 @@
+[
+  {
+    "id_produit":1000,
+    "name":"Burger",
+    "price":18,
+    "description":"steack hache, fromage, saladetomateoignons"
+  },
+  {
+    "id_produit":2000,
+    "name":"Pizza",
+    "price":17,
+    "description":"poulet, champignon, poivrons"
+  },
+  {
+    "id_produit":3000,
+    "name":"Tacos",
+    "price":16,
+    "description":"viande hachee, poulet, chedar"
+  }
+]

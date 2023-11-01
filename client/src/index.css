@@ -1,0 +1,16 @@
+.orderItem{
+  display: flex;
+  
+}
+.orderInfo{
+  padding: 20px;
+  width: 100%;
+}
+
+img{
+  max-width: 30%;
+}
+.quantity{
+  display: flex;
+  
+}

@@ -1,0 +1,16 @@
+
+
+
+<div class="grid_container">
+    {{#each produits}}
+
+    <div class="grid_item">
+        <img src={{this.chemin_image}} alt="avatar" class="burger">
+        <div class="container">
+            <h4><b>{{this.nom}}</b></h4>
+            <p>${{this.prix}}</p>
+            <button id="{{this.id_produit}}" class="btn-addtocart">ajouter au panier</button>
+        </div>
+    </div>
+    {{/each}}
+</div>
