@@ -6,6 +6,7 @@ import connectionPromise from '../connexion.js'
 const connection = await connectionPromise
 
 export const getAllOrdersDb = async (id_utilisateur) => {
+  console.log('userId', id_utilisateur)
   const results = await connection.all(
     `SELECT * FROM commande as c JOIN commande_produit as cp ON c.id_commande=cp.id_commande WHERE id_utilisateur=${id_utilisateur} `
   )
@@ -87,8 +88,51 @@ export const addOrderDb = async (id_utilisateur, produits) => {
   }
 }
 
-export const deleteOrderDb = async (orderId) => {
-  await connection.run(`DELETE FROM commande WHERE id_commande =?;`, [orderId])
+export const addOrderProductDb = async (id_utilisateur, produit) => {
+  const etat = await connection.get(`SELECT id_etat_commande FROM etat_commande WHERE nom = "Dans le panier"`)
+  const hasAnOrder = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur =?`, [id_utilisateur])
+  console.log('hasAnOrder', hasAnOrder)
+  if (hasAnOrder === undefined) {
+    const results = await connection.run(
+      `INSERT INTO commande(id_etat_commande,id_utilisateur,
+      date
+      )
+      VALUES (?,?,?)`,
+      [etat.id_etat_commande, id_utilisateur, Date.now()]
+    )
+
+    const id_commande = results.lastID
+    await connection.run(
+      `INSERT INTO commande_produit(id_commande, id_produit, quantite)
+            VALUES(?, ?, ?)`,
+      [id_commande, produit.id, produit.quantite]
+    )
+  } else {
+    console.log('produit', produit)
+    const hasAProduct = await connection.get(`SELECT id_produit FROM commande_produit WHERE id_produit=?`, [produit.id])
+    // console.log('hasproduct', hasAProduct)
+    if (hasAProduct === undefined) {
+      console.log('produit', produit)
+      await connection.run(
+        `INSERT INTO commande_produit(id_commande, id_produit, quantite)
+          VALUES(?, ?, ?)`,
+        [hasAnOrder.id_commande, produit.id, produit.quantite]
+      )
+    } else {
+      console.log('here')
+      await connection.get(`UPDATE commande_produit SET quantite = quantite+${produit.quantite} WHERE id_produit=? `, [
+        produit.id,
+      ])
+    }
+
+    console.log('hasAnOrder', hasAnOrder.id_commande)
+  }
+}
+
+export const deleteOrderDb = async (userId) => {
+  const orderId = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur=?`, [userId])
+
+  await connection.run(`DELETE FROM commande WHERE id_commande =?;`, [orderId.id_commande])
 }
 
 export const updateOrderDb = async (id_commande, id_produit, quantite) => {

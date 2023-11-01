@@ -7,15 +7,16 @@ const getProductsServer = async () => {
   return products
 }
 
-const addOrderServer = async (date, produits) => {
+const addOrderServer = async (produit) => {
   await fetch(`${HOST}/api/commande`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization:
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91dGlsaXNhdGV1ciI6MiwiaWF0IjoxNjk4Nzk2NTA1LCJleHAiOjE3MDY1NzI1MDV9.DtxZWl0nQ9VqqiyNGXgUY9QH-Yzqi0ml4MVojntxnTI',
     },
     body: JSON.stringify({
-      date: date,
-      produits: produits,
+      produit: produit,
     }),
   })
 }
@@ -27,6 +28,6 @@ document.querySelectorAll('.btn-addtocart').forEach((item) => {
     console.log('produits', produits, e.target.id, typeof e.target.id)
     const produit = produits.filter((p) => p.id_produit === +e.target.id)
     console.log('ptodduit', produit)
-    addOrderServer(Date.now(), [{ id: produit[0].id_produit, quantite: 1 }])
+    addOrderServer({ id: produit[0].id_produit, quantite: 1 })
   })
 })
