@@ -1,11 +1,10 @@
-import { useState } from 'react'
-import { OrderItem } from './OrderItem'
 import { HOST } from '../../constants'
+import { fetchOrderedProducts } from '../../services'
+import { OrderItem } from './OrderItem'
 
-export function OrderList({ orderedProducts }) {
+export function OrderList({ orderedProducts, setOrders }) {
   async function fetchDeleteProduct(id_product) {
-    //console.log(id_product)
-    const response = await fetch(`${HOST}/commande/${id_product}`, {
+    await fetch(`${HOST}/commande/${id_product}`, {
       method: 'DELETE',
       headers: {
         Authorization:
@@ -13,13 +12,12 @@ export function OrderList({ orderedProducts }) {
       },
     })
 
-    setMyProducts(myProducts.filter((p) => p.id_produit !== id_product))
+    const products = await fetchOrderedProducts()
+
+    setOrders(products)
   }
 
-  const [myProducts, setMyProducts] = useState(orderedProducts)
-  // const myOrder = orders[0]
   if (!orderedProducts) return []
-  console.log('orderedProduts', orderedProducts)
   return orderedProducts.map((product) => {
     return (
       <div key={product.id_produit} className='product-container'>

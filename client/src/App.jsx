@@ -1,38 +1,7 @@
-import { OrderItem } from './components/forms/OrderItem'
-import { OrderList } from './components/forms/OrderList'
 import { useEffect, useState } from 'react'
-import { HOST } from './constants'
+import { OrderList } from './components/forms/OrderList'
 
-const fetchOrderedProducts = async () => {
-  const response = await fetch(`${HOST}/commande`, {
-    headers: {
-      Authorization:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91dGlsaXNhdGV1ciI6MiwiaWF0IjoxNjk4Nzk2NTA1LCJleHAiOjE3MDY1NzI1MDV9.DtxZWl0nQ9VqqiyNGXgUY9QH-Yzqi0ml4MVojntxnTI',
-    },
-  })
-  const data = await response.json()
-  return data
-}
-
-const fetchOrderDelete = async () => {
-  const response = await fetch(`${HOST}/commande`, {
-    method: 'DELETE',
-    headers: {
-      Authorization:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91dGlsaXNhdGV1ciI6MiwiaWF0IjoxNjk4Nzk2NTA1LCJleHAiOjE3MDY1NzI1MDV9.DtxZWl0nQ9VqqiyNGXgUY9QH-Yzqi0ml4MVojntxnTI',
-    },
-  })
-}
-
-const fetchConfirmOrder = async () => {
-  const response = await fetch(`${HOST}/etatCommande`, {
-    method: 'POST',
-    headers: {
-      Authorization:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91dGlsaXNhdGV1ciI6MiwiaWF0IjoxNjk4Nzk2NTA1LCJleHAiOjE3MDY1NzI1MDV9.DtxZWl0nQ9VqqiyNGXgUY9QH-Yzqi0ml4MVojntxnTI',
-    },
-  })
-}
+import { fetchOrderedProducts, fetchConfirmOrder, fetchOrderDelete } from './services'
 //TODO : delete element when deleting product from DB
 //      delete order when you delete last product of that order
 //      add delete order button
@@ -48,6 +17,17 @@ function App() {
     }
     wrapFetch()
   }, [])
+
+  const deleteCommand = async () => {
+    await fetchOrderDelete()
+    const products = await fetchOrderedProducts()
+    setOrders(products)
+  }
+
+  const confirmCommand = async () => {
+    await fetchConfirmOrder()
+    setOrders([])
+  }
   console.log('myorder', orderedProducts)
   return (
     <>
@@ -72,13 +52,13 @@ function App() {
       <div id='page-container'>
         <h1 style={{ textAlign: 'center' }}>Ma commande</h1>
         <div className='order-container'>
-          {orderedProducts && <OrderList orderedProducts={orderedProducts} />}
+          {orderedProducts && <OrderList setOrders={setOrders} orderedProducts={orderedProducts} />}
           {orderedProducts.length > 0 && (
             <div className='order-btns'>
-              <button className='delete-order-btn' onClick={fetchOrderDelete}>
+              <button className='delete-order-btn' onClick={deleteCommand}>
                 Supprimer la commande
               </button>
-              <button className='confirm-order-btn' onClick={fetchConfirmOrder}>
+              <button className='confirm-order-btn' onClick={confirmCommand}>
                 confirmer la commande
               </button>
             </div>

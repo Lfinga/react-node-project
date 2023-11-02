@@ -13,7 +13,7 @@ export function OrderItem({ name, price, quantite, imgPath }) {
   }
 
   function decreaseCount() {
-    if (itemCount < 1) return 0
+    if (itemCount < 1) return setItemCount(0)
     setItemCount((itemCount) => itemCount - 1)
   }
 
