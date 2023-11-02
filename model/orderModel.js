@@ -177,3 +177,13 @@ export const deleteOrderedProductDb = async (userId, productId) => {
   ])
   console.log('just deleted', deletedProduct)
 }
+
+export const confirmOrderDb = async (id_utilisateur) => {
+  const orderId = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur=?`, [id_utilisateur])
+  console.log('orderID', orderId)
+  const etat = await connection.get(`SELECT id_etat_commande FROM etat_commande WHERE nom = "En cuisine"`)
+  const updatedState = await connection.get(`UPDATE commande SET id_etat_commande=? WHERE id_commande=?`, [
+    etat.id_etat_commande,
+    orderId.id_commande,
+  ])
+}

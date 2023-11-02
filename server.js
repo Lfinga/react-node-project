@@ -19,6 +19,7 @@ import {
   deleteOrderedProduct,
   addOrderProduct,
   getOrderedProducts,
+  confirmOrder,
 } from './controllers/orderController.js'
 import { getAllProducts, addProduct, deleteProduct, updateProduct, checkbody } from './controllers/productController.js'
 import { getAllUsers, addUser, deleteUser, updateUser } from './controllers/userController.js'
@@ -69,9 +70,7 @@ app.route('/api/commande/:id').post(protect, addOrder)
 app.route('/api/commande/:id_produit').delete(protect, deleteOrderedProduct).patch(protect, updateOrder)
 
 // etat commande
-app.route('/api/etatCommande').get((request, response) => {
-  response.sendStatus(200)
-})
+app.route('/api/etatCommande').get().post(protect, confirmOrder)
 
 // utilisateurs
 app.route('/api/users').get(protect, getAllUsers).post(addUser)

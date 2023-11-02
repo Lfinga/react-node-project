@@ -46,3 +46,16 @@ img{
   display: flex;
   ;
 }
+.order-container{
+  text-align: center;
+}
+.delete-order-btn{
+text-align:center ;
+}
+
+.quantity{
+  float: right;
+}
+.item-count{
+  padding: 4px;
+}

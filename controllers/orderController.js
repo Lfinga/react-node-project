@@ -6,6 +6,7 @@ import {
   deleteOrderedProductDb,
   addOrderProductDb,
   getOrderProductsDb,
+  confirmOrderDb,
 } from '../model/orderModel.js'
 
 export const getAllOrders = async (request, response) => {
@@ -36,7 +37,10 @@ export const addOrder = async (request, response) => {
     await addOrderDb(request.user.id_utilisateur, request.body.produits)
     response.sendStatus(201)
   } catch (error) {
-    response.sendStatus(400)
+    response.status(400).json({
+      status: 'fail',
+      message: error.messsage,
+    })
   }
 }
 
@@ -47,7 +51,10 @@ export const addOrderProduct = async (request, response) => {
     await addOrderProductDb(request.user.id_utilisateur, request.body.produit)
     response.sendStatus(201)
   } catch (error) {
-    response.sendStatus(400)
+    response.status(400).json({
+      status: 'fail',
+      message: error.messsage,
+    })
   }
 }
 
@@ -79,6 +86,21 @@ export const deleteOrderedProduct = async (request, response) => {
     await deleteOrderedProductDb(request.user.id_utilisateur, request.params.id_produit)
     response.sendStatus(204)
   } catch (error) {
-    response.sendStatus(400)
+    response.status(400).json({
+      status: 'fail',
+      message: error.messsage,
+    })
+  }
+}
+
+export const confirmOrder = async (request, response) => {
+  try {
+    await confirmOrderDb(request.user.id_utilisateur)
+    response.sendStatus(204)
+  } catch (error) {
+    response.status(400).json({
+      status: 'fail',
+      message: error.messsage,
+    })
   }
 }

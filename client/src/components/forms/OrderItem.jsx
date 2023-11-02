@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { HOST } from '../../constants'
 
-export function OrderItem({ id_product, name, price, quantite, imgPath }) {
+export function OrderItem({ name, price, quantite, imgPath }) {
   const [itemCount, setItemCount] = useState(0)
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export function OrderItem({ id_product, name, price, quantite, imgPath }) {
             <button onClick={decreaseCount} className='minus'>
               -
             </button>
-            <p>{itemCount}</p>
+            <span className='item-count'>{itemCount}</span>
             <button onClick={increaseCount} className='plus'>
               +
             </button>

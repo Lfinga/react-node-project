@@ -13,6 +13,26 @@ const fetchOrderedProducts = async () => {
   const data = await response.json()
   return data
 }
+
+const fetchOrderDelete = async () => {
+  const response = await fetch(`${HOST}/commande`, {
+    method: 'DELETE',
+    headers: {
+      Authorization:
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91dGlsaXNhdGV1ciI6MiwiaWF0IjoxNjk4Nzk2NTA1LCJleHAiOjE3MDY1NzI1MDV9.DtxZWl0nQ9VqqiyNGXgUY9QH-Yzqi0ml4MVojntxnTI',
+    },
+  })
+}
+
+const fetchConfirmOrder = async () => {
+  const response = await fetch(`${HOST}/etatCommande`, {
+    method: 'POST',
+    headers: {
+      Authorization:
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91dGlsaXNhdGV1ciI6MiwiaWF0IjoxNjk4Nzk2NTA1LCJleHAiOjE3MDY1NzI1MDV9.DtxZWl0nQ9VqqiyNGXgUY9QH-Yzqi0ml4MVojntxnTI',
+    },
+  })
+}
 //TODO : delete element when deleting product from DB
 //      delete order when you delete last product of that order
 //      add delete order button
@@ -28,7 +48,7 @@ function App() {
     }
     wrapFetch()
   }, [])
-
+  console.log('myorder', orderedProducts)
   return (
     <>
       <header className='header'>
@@ -51,8 +71,19 @@ function App() {
       </header>
       <div id='page-container'>
         <h1 style={{ textAlign: 'center' }}>Ma commande</h1>
-
-        {orderedProducts && <OrderList orderedProducts={orderedProducts} />}
+        <div className='order-container'>
+          {orderedProducts && <OrderList orderedProducts={orderedProducts} />}
+          {orderedProducts.length > 0 && (
+            <div className='order-btns'>
+              <button className='delete-order-btn' onClick={fetchOrderDelete}>
+                Supprimer la commande
+              </button>
+              <button className='confirm-order-btn' onClick={fetchConfirmOrder}>
+                confirmer la commande
+              </button>
+            </div>
+          )}
+        </div>
 
         <footer className='footer'>
           <p>Copyright &copy 2023</p>

@@ -23,13 +23,7 @@ export function OrderList({ orderedProducts }) {
   return orderedProducts.map((product) => {
     return (
       <div key={product.id_produit} className='product-container'>
-        <OrderItem
-          id_product={product.id_produit}
-          name={product.nom}
-          price={product.prix}
-          quantite={product.quantite}
-          imgPath={product.chemin_image}
-        />
+        <OrderItem name={product.nom} price={product.prix} quantite={product.quantite} imgPath={product.chemin_image} />
         <button onClick={() => fetchDeleteProduct(product.id_produit)} className='deleteOrder'>
           X
         </button>
