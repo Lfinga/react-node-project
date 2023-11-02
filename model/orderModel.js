@@ -39,6 +39,7 @@ export const getAllOrdersDb = async (id_utilisateur) => {
   return uniqueOrderIds.map((id) => uniqueOrders[id])
 }
 
+//TODO
 export const getOrderProductsDb = async (id_utilisateur) => {
   const connection = await getDbClient()
 

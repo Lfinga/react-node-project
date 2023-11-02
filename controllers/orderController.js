@@ -19,6 +19,8 @@ export const getAllOrders = async (request, response) => {
 }
 
 export const getOrderedProducts = async (request, response) => {
+  const etat_commande_filtre = request.query.include?.split(',')?.map((i) => i.replaceAll('"', ''))
+  console.log('query param', etat_commande_filtre)
   try {
     let data = await getOrderProductsDb(request.user.id_utilisateur)
     response.status(200).json(data)
