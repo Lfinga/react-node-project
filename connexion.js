@@ -6,23 +6,27 @@ import { open } from 'sqlite'
  * Constante indiquant si la base de données existe au démarrage du serveur
  * ou non.
  */
-const IS_NEW = !existsSync(process.env.DB_FILE)
 
 /**
  * Crée une base de données par défaut pour le serveur. Des données fictives
  * pour tester le serveur y ont été ajouté.
  */
-const createDatabase = async (connectionPromise) => {
-  let connection = await connectionPromise
+const createDatabase = async () => {
+  const IS_NEW = !existsSync(process.env.DB_FILE)
+  const connection = await open({
+    filename: process.env.DB_FILE,
+    driver: sqlite3.Database,
+  })
 
   await connection.exec(`PRAGMA foreign_keys = ON;`)
+  if (!IS_NEW) return connection
   await connection.exec(
     `CREATE TABLE type_utilisateur(
 			id_type_utilisateur INTEGER PRIMARY KEY,
 			nom TEXT NOT NULL
 			);
 			
-			PRAGMA foreign_keys = ON;
+		
 		
 		CREATE TABLE etat_commande(
 			id_etat_commande INTEGER PRIMARY KEY,
@@ -112,15 +116,16 @@ const createDatabase = async (connectionPromise) => {
 }
 
 // Base de données dans un fichier
-let connectionPromise = open({
-  filename: process.env.DB_FILE,
-  driver: sqlite3.Database,
-})
 
 // Si le fichier de base de données n'existe pas, on crée la base de données
 // et on y insère des données fictive de test.
-if (IS_NEW) {
-  connectionPromise = createDatabase(connectionPromise)
+
+let dbClient
+async function getDbClient() {
+  if (!dbClient) {
+    dbClient = await createDatabase()
+  }
+  return dbClient
 }
 
-export default connectionPromise
+export default getDbClient

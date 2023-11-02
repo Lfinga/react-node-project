@@ -1,9 +1,7 @@
-import connectionPromise from '../connexion.js'
+import getDbClient from '../connexion.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { signToken } from '../controllers/authController.js'
-
-const connection = await connectionPromise
 
 // const emails = []
 
@@ -21,11 +19,15 @@ const connection = await connectionPromise
 // console.log(emails)
 
 export const getAllUsersDb = async () => {
+  const connection = await getDbClient()
+
   const results = await connection.all(`SELECT id_utilisateur,id_type_utilisateur,courriel,prenom,nom FROM utilisateur`)
   return results
 }
 
 export const addUserDb = async (courriel, mdp, confirmation_mdp, prenom, nom) => {
+  const connection = await getDbClient()
+
   const emailExists = await connection.get(`SELECT id_utilisateur FROM utilisateur WHERE courriel LIKE '${courriel}'`)
   //console.log('lol', emailExists)
   if (emailExists !== undefined) throw new Error('This Email adress is already taken')
@@ -44,9 +46,13 @@ export const addUserDb = async (courriel, mdp, confirmation_mdp, prenom, nom) =>
 }
 
 export const deleteUserDb = async (id_utilisateur) => {
+  const connection = await getDbClient()
+
   await connection.run(`DELETE FROM utilisateur WHERE id_utilisateur=${id_utilisateur}`)
 }
 
 export const updateUserDb = async (id_utilisateur) => {
+  const connection = await getDbClient()
+
   await connection.get(`UPDATE utilisateur SET `)
 }

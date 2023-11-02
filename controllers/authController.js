@@ -1,10 +1,8 @@
 import { addUserDb } from '../model/userModel.js'
-import connectionPromise from '../connexion.js'
+import getDbClient from '../connexion.js'
 import bcrypt from 'bcryptjs'
 
 import jwt from 'jsonwebtoken'
-
-const connection = await connectionPromise
 
 export const signToken = (id_utilisateur) => {
   return jwt.sign({ id_utilisateur }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN })
@@ -31,6 +29,8 @@ export const userSignup = async (request, response) => {
 // Login
 
 export const userLogin = async (request, response) => {
+  const connection = await getDbClient()
+
   const { courriel, mot_de_passe } = request.body
 
   try {
@@ -63,6 +63,8 @@ export const userLogin = async (request, response) => {
 // login protection
 
 export const protect = async (request, response, next) => {
+  const connection = await getDbClient()
+
   let token
   if (request.headers.authorization && request.headers.authorization.startsWith('Bearer')) {
     token = request.headers.authorization.split(' ')[1]
@@ -102,6 +104,8 @@ export const protect = async (request, response, next) => {
 // user restriction
 
 export const restrictTo = async (request, response) => {
+  const connection = await getDbClient()
+
   console.log('current userId', request.user)
 
   const idType = await connection.get(
@@ -119,6 +123,8 @@ export const restrictTo = async (request, response) => {
 }
 
 export const updatePassword = async (request, response, next) => {
+  const connection = await getDbClient()
+
   let currentUserPassword = request.user.mot_de_passe
 
   if (

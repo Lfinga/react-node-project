@@ -1,11 +1,11 @@
-import connectionPromise from '../connexion.js'
+import getDbClient from '../connexion.js'
 
 // Attendre que la connexion à la base de données
 // soit établie
 
-const connection = await connectionPromise
-
 export const getAllOrdersDb = async (id_utilisateur) => {
+  const connection = await getDbClient()
+
   console.log('userId', id_utilisateur)
   const results = await connection.all(
     `SELECT * FROM commande as c JOIN commande_produit as cp ON c.id_commande=cp.id_commande 
@@ -40,6 +40,8 @@ export const getAllOrdersDb = async (id_utilisateur) => {
 }
 
 export const getOrderProductsDb = async (id_utilisateur) => {
+  const connection = await getDbClient()
+
   const hasAnOrder = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur =?`, [id_utilisateur])
   console.log(hasAnOrder)
   if (hasAnOrder === undefined) return []
@@ -63,6 +65,8 @@ export const getOrderProductsDb = async (id_utilisateur) => {
 }
 
 export const addOrderDb = async (id_utilisateur, produits) => {
+  const connection = await getDbClient()
+
   const etat = await connection.get(`SELECT id_etat_commande FROM etat_commande WHERE nom = "Dans le panier"`)
   const hasAnOrder = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur =?`, [id_utilisateur])
   console.log('hasAnOrder', hasAnOrder)
@@ -113,6 +117,8 @@ export const addOrderDb = async (id_utilisateur, produits) => {
 }
 
 export const addOrderProductDb = async (id_utilisateur, produit) => {
+  const connection = await getDbClient()
+
   const etat = await connection.get(`SELECT id_etat_commande FROM etat_commande WHERE nom = "Dans le panier"`)
   const hasAnOrder = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur =?`, [id_utilisateur])
   console.log('hasAnOrder', hasAnOrder)
@@ -154,12 +160,16 @@ export const addOrderProductDb = async (id_utilisateur, produit) => {
 }
 
 export const deleteOrderDb = async (userId) => {
+  const connection = await getDbClient()
+
   const orderId = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur=?`, [userId])
 
   await connection.run(`DELETE FROM commande WHERE id_commande =?;`, [orderId.id_commande])
 }
 
 export const updateOrderDb = async (id_commande, id_produit, quantite) => {
+  const connection = await getDbClient()
+
   const results = await connection.get(
     `UPDATE commande_produit SET quantite=? WHERE (id_commande=? AND id_produit=?);`,
     [quantite, id_commande, id_produit]
@@ -169,6 +179,8 @@ export const updateOrderDb = async (id_commande, id_produit, quantite) => {
 }
 
 export const deleteOrderedProductDb = async (userId, productId) => {
+  const connection = await getDbClient()
+
   const orderId = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur=?`, [userId])
   console.log('orderId', orderId)
   const deletedProduct = await connection.run(`DELETE FROM commande_produit WHERE id_commande=? and id_produit=?`, [
@@ -179,6 +191,8 @@ export const deleteOrderedProductDb = async (userId, productId) => {
 }
 
 export const confirmOrderDb = async (id_utilisateur) => {
+  const connection = await getDbClient()
+
   const orderId = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur=?`, [id_utilisateur])
   console.log('orderID', orderId)
   const etat = await connection.get(`SELECT id_etat_commande FROM etat_commande WHERE nom = "En cuisine"`)

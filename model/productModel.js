@@ -1,16 +1,18 @@
-import connectionPromise from '../connexion.js'
+import getDbClient from '../connexion.js'
 
 // Attendre que la connexion à la base de données
 // soit établie
 
-let connection = await connectionPromise
+export const getProductsDb = async () => {
+  let connection = await getDbClient()
 
-export const getProductsDb = () => {
   // Envoyer une requête à la base de données
   return connection.all('SELECT * FROM produit')
 }
 
 export const addProductDb = async (product) => {
+  let connection = await getDbClient()
+
   const results = await connection.run(
     `INSERT INTO produit(
     nom,
@@ -21,10 +23,14 @@ export const addProductDb = async (product) => {
 }
 
 export const deleteProductDb = async (productId) => {
+  let connection = await getDbClient()
+
   const results = await connection.run(`DELETE FROM produit WHERE id_produit = ${productId}`)
 }
 
 export const updateProductDb = async (nom, prix, productId) => {
+  let connection = await getDbClient()
+
   const results = await connection.get(
     `UPDATE produit
   SET nom=?, prix=? WHERE id_produit=?`,
