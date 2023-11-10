@@ -10,6 +10,7 @@ import cspOption from './csp-options.js'
 import fs from 'fs'
 import morgan from 'morgan'
 import { engine } from 'express-handlebars'
+import getDbClient from './connexion.js'
 
 import {
   getAllOrders,

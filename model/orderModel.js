@@ -76,6 +76,7 @@ export const addOrderDb = async (id_utilisateur, produits) => {
 
   const etat = await connection.get(`SELECT id_etat_commande FROM etat_commande WHERE nom = "Dans le panier"`)
   const hasAnOrder = await connection.get(`SELECT id_commande FROM commande WHERE id_utilisateur =?`, [id_utilisateur])
+
   console.log('hasAnOrder', hasAnOrder)
   if (hasAnOrder === undefined) {
     const results = await connection.run(
@@ -131,14 +132,16 @@ export const addOrderProductDb = async (id_utilisateur, produit) => {
     `SELECT id_commande FROM commande WHERE id_utilisateur =? AND id_etat_commande=?`,
     [id_utilisateur, etat.id_etat_commande]
   )
+  const prix = await connection.get(`SELECT prix FROM produit WHERE id_produit=?`, [produit.id])
+  console.log(prix)
   console.log('hasAnOrder', hasAnOrder)
   if (hasAnOrder === undefined) {
     const results = await connection.run(
       `INSERT INTO commande(id_etat_commande,id_utilisateur,
-      date
+      date,total
       )
-      VALUES (?,?,?)`,
-      [etat.id_etat_commande, id_utilisateur, Date.now()]
+      VALUES (?,?,?,?)`,
+      [etat.id_etat_commande, id_utilisateur, Date.now(), produit.quantite * prix.prix]
     )
 
     const id_commande = results.lastID
@@ -148,7 +151,6 @@ export const addOrderProductDb = async (id_utilisateur, produit) => {
       [id_commande, produit.id, produit.quantite]
     )
   } else {
-    console.log('produit', produit)
     const hasAProduct = await connection.get(
       `SELECT id_produit FROM commande_produit WHERE id_produit=? and id_commande=?`,
       [produit.id, hasAnOrder.id_commande]
@@ -161,10 +163,16 @@ export const addOrderProductDb = async (id_utilisateur, produit) => {
           VALUES(?, ?, ?)`,
         [hasAnOrder.id_commande, produit.id, produit.quantite]
       )
+      await connection.run(`UPDATE commande SET total = total+${produit.quantite}*${prix.prix} WHERE id_commande=?`, [
+        hasAnOrder.id_commande,
+      ])
     } else {
       console.log('here')
       await connection.get(`UPDATE commande_produit SET quantite = quantite+${produit.quantite} WHERE id_produit=? `, [
         produit.id,
+      ])
+      await connection.run(`UPDATE commande SET total = total+${produit.quantite}*${prix.prix} WHERE id_commande=?`, [
+        hasAnOrder.id_commande,
       ])
     }
 
@@ -233,25 +241,11 @@ export const confirmOrderDb = async (id_utilisateur) => {
 export const getEtatCommandeDb = async (id_utilisateur) => {
   const connection = await getDbClient()
 
-  const etat = await connection.get(`SELECT id_etat_commande FROM etat_commande WHERE nom = "Dans le panier"`)
-
-  const activeOrders = await connection.all(
-    `SELECT id_commande FROM commande WHERE id_utilisateur =? AND id_etat_commande!=?`,
-    [id_utilisateur, etat.id_etat_commande]
+  console.log('userId', id_utilisateur)
+  const results = connection.all(
+    `SELECT * FROM commande as c JOIN etat_commande as ec on c.id_etat_commande=ec.id_etat_commande 
+    WHERE id_utilisateur=?`,
+    [id_utilisateur]
   )
-  console.log(activeOrders)
-
-  if (activeOrders === undefined) return []
-  //TODO: boucle pour trouver les produits de chaque commande
-  let myOrders = []
-  for (const order of activeOrders) {
-    const productId = await connection.all(
-      `SELECT cp.id_commande,cp.id_produit,c.id_etat_commande,cp.quantite,prix,c.date FROM produit as p JOIN commande_produit as cp 
-      on cp.id_produit = p.id_produit  JOIN commande as c on c.id_commande=cp.id_commande WHERE cp.id_commande=?`,
-      [order.id_commande]
-    )
-    myOrders.push(productId)
-  }
-
-  return myOrders
+  return results
 }

@@ -12,7 +12,7 @@ import {
 
 export const getAllOrders = async (request, response) => {
   try {
-    let data = await getAllOrdersDb(request.user.id_utilisateur)
+    let data = await getEtatCommandeDb(request.user.id_utilisateur)
     response.status(200).json(data)
   } catch (error) {
     response.sendStatus(400)
@@ -21,7 +21,7 @@ export const getAllOrders = async (request, response) => {
 
 export const getOrderedProducts = async (request, response) => {
   //const etat_commande_filtre = request.query.include?.split(',')?.map((i) => i.replaceAll('"', ''))
-  console.log('query param', etat_commande_filtre)
+  //console.log('query param', etat_commande_filtre)
   try {
     let data = await getOrderProductsDb(request.user.id_utilisateur)
     response.status(200).json(data)

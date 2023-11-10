@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 
-export function Order({ total, date, status }) {
+export function Order({ order_id, total, date, status }) {
   return (
     <>
       <div className='order-status'>
         <img src='' alt='' />
         <div>
-          <p>Total Price : {total}</p>
+          <p>Commande {order_id} :</p>
+          <p>Total Price : ${total}</p>
           <p></p>
         </div>
         <p>Ordered at : {date}</p>

@@ -55,6 +55,7 @@ const createDatabase = async () => {
 			id_commande INTEGER PRIMARY KEY,
 			id_utilisateur INTEGER,
 			id_etat_commande INTEGER,
+			total INTEGER,
 			date INTEGER,
 			FOREIGN KEY(id_utilisateur)
 			REFERENCES utilisateur(id_utilisateur),
