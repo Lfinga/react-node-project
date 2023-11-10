@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import { HOST } from '../../constants'
 
-export function OrderItem({ name, price, quantite, imgPath }) {
+export function OrderProduct({ name, price, quantite, imgPath }) {
   const [itemCount, setItemCount] = useState(0)
 
   useEffect(() => {
@@ -20,7 +19,7 @@ export function OrderItem({ name, price, quantite, imgPath }) {
   return (
     <>
       <div className='orderItem'>
-        <img src='../public/img/burger-card.png' alt='avatar' />
+        <img className='order-product-img' src={imgPath} alt='avatar' />
         <div className='orderInfo'>
           <h4>
             <b>{name}</b>

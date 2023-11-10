@@ -103,7 +103,7 @@ export const protect = async (request, response, next) => {
 
 // user restriction
 
-export const restrictTo = async (request, response) => {
+export async function restrictTo(request, response) {
   const connection = await getDbClient()
 
   console.log('current userId', request.user)

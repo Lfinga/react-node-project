@@ -20,6 +20,7 @@ import {
   addOrderProduct,
   getOrderedProducts,
   confirmOrder,
+  getEtatCommande,
 } from './controllers/orderController.js'
 import { getAllProducts, addProduct, deleteProduct, updateProduct, checkbody } from './controllers/productController.js'
 import { getAllUsers, addUser, deleteUser, updateUser } from './controllers/userController.js'
@@ -60,21 +61,21 @@ app.post('/api/users/signup', userSignup)
 app.post('/api/users/Login', userLogin)
 app.post('/api/users/passwordUpdate', protect, updatePassword)
 
-// produits
-app.route('/api').get(getAllProducts).post(checkbody, protect, restrictTo, addProduct)
-//app.route('/api/:id').delete(protect, restrictTo, deleteProduct).patch(protect, restrictTo, updateProduct)
-
 // commandes
 app.route('/api/commande').get(protect, getOrderedProducts).delete(protect, deleteOrder).post(protect, addOrderProduct)
 app.route('/api/commande/:id').post(protect, addOrder)
 app.route('/api/commande/:id_produit').delete(protect, deleteOrderedProduct).patch(protect, updateOrder)
 
 // etat commande
-app.route('/api/etatCommande').get().post(protect, confirmOrder)
+app.route('/api/etatCommande').get(protect, getAllOrders).post(protect, confirmOrder)
 
 // utilisateurs
 app.route('/api/users').get(protect, getAllUsers).post(addUser)
 app.route('/api/users/:id').delete(deleteUser).patch(updateUser)
+
+// produits
+app.route('/api').get(getAllProducts).post(checkbody, protect, restrictTo, addProduct)
+app.route('/api/:id').delete(protect, restrictTo, deleteProduct).patch(protect, restrictTo, updateProduct)
 
 // Renvoyer une erreur 404 pour les routes non définies
 app.use(function (request, response) {

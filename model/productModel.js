@@ -7,7 +7,7 @@ export const getProductsDb = async () => {
   let connection = await getDbClient()
 
   // Envoyer une requête à la base de données
-  return connection.all('SELECT * FROM produit')
+  return connection.all(`SELECT * FROM produit`)
 }
 
 export const addProductDb = async (product) => {

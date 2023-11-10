@@ -1,31 +1,18 @@
-import { HOST } from '../../constants'
-import { fetchOrderedProducts } from '../../services'
-import { OrderItem } from './OrderItem'
+import { fetchOrders } from '../../services'
+import { Order } from './Order'
 
-export function OrderList({ orderedProducts, setOrders }) {
-  async function fetchDeleteProduct(id_product) {
-    await fetch(`${HOST}/commande/${id_product}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91dGlsaXNhdGV1ciI6MiwiaWF0IjoxNjk4Nzk2NTA1LCJleHAiOjE3MDY1NzI1MDV9.DtxZWl0nQ9VqqiyNGXgUY9QH-Yzqi0ml4MVojntxnTI',
-      },
-    })
-
-    const products = await fetchOrderedProducts()
-
-    setOrders(products)
+export function OrderList({ orderStatus }) {
+  let total = 0
+  for (const order of orderStatus) {
+    total += order[0].prix * order[0].quantite
   }
-
-  if (!orderedProducts) return []
-  return orderedProducts.map((product) => {
-    return (
-      <div key={product.id_produit} className='product-container'>
-        <OrderItem name={product.nom} price={product.prix} quantite={product.quantite} imgPath={product.chemin_image} />
-        <button onClick={() => fetchDeleteProduct(product.id_produit)} className='deleteOrder'>
-          X
-        </button>
-      </div>
-    )
-  })
+  if (!orderStatus) return []
+  for (const orderstat of orderStatus) {
+    return orderstat.map((order) => {
+      console.log('order', order)
+      return <Order key={order.id_produit} total={total} date={order.date} status={order.id_etat_commande} />
+    })
+  }
 }
+
+// TODO: l'api de etat comande retourne un mauvais tableau

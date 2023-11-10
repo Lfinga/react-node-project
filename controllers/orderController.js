@@ -7,6 +7,7 @@ import {
   addOrderProductDb,
   getOrderProductsDb,
   confirmOrderDb,
+  getEtatCommandeDb,
 } from '../model/orderModel.js'
 
 export const getAllOrders = async (request, response) => {
@@ -19,7 +20,7 @@ export const getAllOrders = async (request, response) => {
 }
 
 export const getOrderedProducts = async (request, response) => {
-  const etat_commande_filtre = request.query.include?.split(',')?.map((i) => i.replaceAll('"', ''))
+  //const etat_commande_filtre = request.query.include?.split(',')?.map((i) => i.replaceAll('"', ''))
   console.log('query param', etat_commande_filtre)
   try {
     let data = await getOrderProductsDb(request.user.id_utilisateur)
@@ -99,6 +100,18 @@ export const confirmOrder = async (request, response) => {
   try {
     await confirmOrderDb(request.user.id_utilisateur)
     response.sendStatus(204)
+  } catch (error) {
+    response.status(400).json({
+      status: 'fail',
+      message: error.messsage,
+    })
+  }
+}
+
+export const getEtatCommande = async (request, response) => {
+  try {
+    const data = await getEtatCommandeDb(request.user.id_utilisateur)
+    response.status(200).json(data)
   } catch (error) {
     response.status(400).json({
       status: 'fail',
