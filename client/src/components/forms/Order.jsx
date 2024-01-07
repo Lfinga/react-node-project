@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react'
-
 export function Order({ order_id, total, date, status }) {
   return (
     <>
@@ -16,5 +14,5 @@ export function Order({ order_id, total, date, status }) {
         <p></p>
       </div>
     </>
-  )
+  );
 }

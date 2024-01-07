@@ -1,6 +1,6 @@
-import { existsSync } from 'fs'
-import sqlite3 from 'sqlite3'
-import { open } from 'sqlite'
+import { existsSync } from 'fs';
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
 
 /**
  * Constante indiquant si la base de données existe au démarrage du serveur
@@ -12,14 +12,14 @@ import { open } from 'sqlite'
  * pour tester le serveur y ont été ajouté.
  */
 const createDatabase = async () => {
-  const IS_NEW = !existsSync(process.env.DB_FILE)
+  const IS_NEW = !existsSync(process.env.DB_FILE);
   const connection = await open({
     filename: process.env.DB_FILE,
     driver: sqlite3.Database,
-  })
+  });
 
-  await connection.exec(`PRAGMA foreign_keys = ON;`)
-  if (!IS_NEW) return connection
+  await connection.exec(`PRAGMA foreign_keys = ON;`);
+  if (!IS_NEW) return connection;
   await connection.exec(
     `CREATE TABLE type_utilisateur(
 			id_type_utilisateur INTEGER PRIMARY KEY,
@@ -55,7 +55,6 @@ const createDatabase = async () => {
 			id_commande INTEGER PRIMARY KEY,
 			id_utilisateur INTEGER,
 			id_etat_commande INTEGER,
-			total INTEGER,
 			date INTEGER,
 			FOREIGN KEY(id_utilisateur)
 			REFERENCES utilisateur(id_utilisateur),
@@ -111,22 +110,22 @@ const createDatabase = async () => {
 		INSERT INTO produit(nom,chemin_image,prix)
 		VALUES('tacos','./img/tacos.jpg',14);
 		`
-  )
+  );
 
-  return connection
-}
+  return connection;
+};
 
 // Base de données dans un fichier
 
 // Si le fichier de base de données n'existe pas, on crée la base de données
 // et on y insère des données fictive de test.
 
-let dbClient
+let dbClient;
 async function getDbClient() {
   if (!dbClient) {
-    dbClient = await createDatabase()
+    dbClient = await createDatabase();
   }
-  return dbClient
+  return dbClient;
 }
 
-export default getDbClient
+export default getDbClient;

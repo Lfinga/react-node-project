@@ -1,121 +1,74 @@
 import {
-  addOrderDb,
   deleteOrderDb,
-  getAllOrdersDb,
+  getProductsFromPanierDb,
   updateOrderDb,
-  deleteOrderedProductDb,
-  addOrderProductDb,
-  getOrderProductsDb,
-  confirmOrderDb,
-  getEtatCommandeDb,
-} from '../model/orderModel.js'
+  addProductToOrderDb,
+  deleteProductFromOrderDb,
+} from '../model/orderModel.js';
+import { checkId } from './validation.js';
 
-export const getAllOrders = async (request, response) => {
+export const getProductsFromPanier = async (request, response) => {
   try {
-    let data = await getEtatCommandeDb(request.user.id_utilisateur)
-    response.status(200).json(data)
-  } catch (error) {
-    response.sendStatus(400)
-  }
-}
-
-export const getOrderedProducts = async (request, response) => {
-  //const etat_commande_filtre = request.query.include?.split(',')?.map((i) => i.replaceAll('"', ''))
-  //console.log('query param', etat_commande_filtre)
-  try {
-    let data = await getOrderProductsDb(request.user.id_utilisateur)
-    response.status(200).json(data)
+    let data = await getProductsFromPanierDb(request.user.id_utilisateur);
+    response.status(200).json(data);
   } catch (error) {
     response.status(400).json({
       status: 'fail',
       message: error.messsage,
-    })
+    });
   }
-}
+};
 
-export const addOrder = async (request, response) => {
-  //console.log(request.body)
-
+export const addProductToOrder = async (request, response) => {
   try {
-    await addOrderDb(request.user.id_utilisateur, request.body.produits)
-    response.sendStatus(201)
+    if (!checkId(request.body.id_produit)) throw new Error('id invalide');
+    console.log('id_utilisateur', request.user.id_utilisateur);
+    await addProductToOrderDb(request.user.id_utilisateur, request.body.id_produit);
+    response.sendStatus(201);
   } catch (error) {
     response.status(400).json({
       status: 'fail',
       message: error.messsage,
-    })
+    });
   }
-}
+};
 
-export const addOrderProduct = async (request, response) => {
-  console.log(request.body)
-
+export const deleteProductFromOrder = async (request, response) => {
   try {
-    await addOrderProductDb(request.user.id_utilisateur, request.body.produit)
-    response.sendStatus(201)
+    if (!checkId(request.params.id)) throw new Error('id invalide');
+
+    await deleteProductFromOrderDb(request.user.id_utilisateur, request.params.id);
+    response.sendStatus(204);
   } catch (error) {
     response.status(400).json({
       status: 'fail',
       message: error.messsage,
-    })
+    });
   }
-}
+};
 
 export const deleteOrder = async (request, response) => {
   try {
-    await deleteOrderDb(request.user.id_utilisateur)
-    response.sendStatus(204)
+    await deleteOrderDb(request.user.id_utilisateur);
+    response.sendStatus(204);
   } catch (error) {
     response.status(400).json({
       status: 'fail',
       message: error.messsage,
-    })
+    });
   }
-}
+};
 
 export const updateOrder = async (request, response) => {
-  const { id_commande, id_produit } = request.params
   try {
-    await updateOrderDb(id_commande, id_produit, request.body.quantite)
-    response.sendStatus(200)
-  } catch (error) {
-    response.sendStatus(400)
-  }
-}
+    if (!checkId(request.params.id)) throw new Error('id invalide');
 
-export const deleteOrderedProduct = async (request, response) => {
-  //const { id_commande, id_produit } = request.params
-  try {
-    await deleteOrderedProductDb(request.user.id_utilisateur, request.params.id_produit)
-    response.sendStatus(204)
+    await updateOrderDb(request.user.id_utilisateur, request.body.quantite, request.params.id);
+    response.sendStatus(200);
   } catch (error) {
     response.status(400).json({
       status: 'fail',
       message: error.messsage,
-    })
+    });
   }
-}
-
-export const confirmOrder = async (request, response) => {
-  try {
-    await confirmOrderDb(request.user.id_utilisateur)
-    response.sendStatus(204)
-  } catch (error) {
-    response.status(400).json({
-      status: 'fail',
-      message: error.messsage,
-    })
-  }
-}
-
-export const getEtatCommande = async (request, response) => {
-  try {
-    const data = await getEtatCommandeDb(request.user.id_utilisateur)
-    response.status(200).json(data)
-  } catch (error) {
-    response.status(400).json({
-      status: 'fail',
-      message: error.messsage,
-    })
-  }
-}
+};
